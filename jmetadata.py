@@ -1,15 +1,21 @@
 import json
 
-metadata_h_template = """\
+metadata_h = """\
 #if WIN32
-__declspec(dllexport) extern char* mydata = "<jmetadata>{metadata}</jmetadata>";
+__declspec(dllexport) extern char* mydata;
 #else
-extern char* mydata = "<jmetadata>{metadata}</jmetadata>";
+extern char* mydata;
 #endif
 """
 
-metadata_c = """\
+metadata_c_template = """\
 #include "jmetadata.h"
+
+#if WIN32
+char* mydata = "<jmetadata>{metadata}</jmetadata>";
+#else
+char* mydata = "<jmetadata>{metadata}</jmetadata>";
+#endif
 """
 
 def load(filepath):
@@ -50,6 +56,6 @@ class JMetadata:
         return JMetadata(deps)
 
     def generate_c(self):
-        metadata_h = metadata_h_template.format(metadata=",".join(dep for dep in self._deps))
+        metadata_c = metadata_c_template.format(metadata=",".join(dep for dep in self._deps))
         open("jmetadata.h", "w").write(metadata_h)
         open("jmetadata.c", "w").write(metadata_c)

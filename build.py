@@ -33,7 +33,8 @@ try:
             run('cmake --build .')
             # Making sure the app works
             run("./myapp")
-            for f in ["myapp", "libmymath.a", "libmyphsx.so"]:
+            shared_ext = "dylib" if platform.system() == "Darwin" else "so"
+            for f in ["myapp", "libmymath.a", "libmyphsx.{}".format(shared_ext)]:
                 file_metadata = JMetadata.load_binary("{}".format(f))
                 assert file_metadata == metadata, "{}!={}".format(file_metadata, metadata)
                 print("{} metadata OK".format(f), file_metadata)
